@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario Ext JS</title>
+    <link rel="stylesheet" href="ext-4/resources/css/ext-all.css">
+    <script src="ext-4/ext-all.js"></script>
+</head>
+<body>
+<script>
+Ext.onReady(function() {
+
+    // Crear formulario
+    var formulario = Ext.create('Ext.form.Panel', {
+        title: 'Formulario de Usuario',
+        width: 400,
+        bodyPadding: 10, // Espacio interno
+        renderTo: Ext.getBody(), // Dibuja el formulario en el <body>
+
+        items: [  // Campos del formulario
+            {
+                xtype: 'textfield',
+                fieldLabel: 'Nombre',
+                name: 'nombre',
+                allowBlank: false  // No permitir vacío (validación)
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: 'Email',
+                name: 'email',
+                vtype: 'email',    // Validación automática para formato de email
+                allowBlank: false
+            },
+            {
+                xtype: 'numberfield',
+                fieldLabel: 'Edad',
+                name: 'edad',
+                minValue: 0,       // Valor mínimo
+                maxValue: 120,     // Valor máximo
+                allowBlank: false
+            }
+        ],
+
+        buttons: [
+            {
+                text: 'Guardar',
+                formBind: true,     // Botón solo se activa si el formulario es válido
+                handler: function() {
+                    // Obtener los valores ingresados
+                    var valores = formulario.getValues();
+
+                    // Mostrar en consola (simulando guardado o envío)
+                    console.log('Datos guardados:', valores);
+
+                    // Mostrar mensaje al usuario
+                    Ext.Msg.alert('Éxito', 'Datos guardados correctamente');
+                }
+            },
+            {
+                text: 'Limpiar',
+                handler: function() {
+                    formulario.getForm().reset();  // Limpiar campos
+                }
+            }
+        ]
+    });
+});
+</script>
+</body>
+</html>

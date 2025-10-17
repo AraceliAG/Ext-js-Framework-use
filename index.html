@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Formulario Ext JS</title>
+    <title>CRUD Básico - Ext JS</title>
     <link rel="stylesheet" href="ext-4/resources/css/ext-all.css">
     <script src="ext-4/ext-all.js"></script>
 </head>
@@ -10,60 +10,170 @@
 <script>
 Ext.onReady(function() {
 
-    // Crear formulario
-    var formulario = Ext.create('Ext.form.Panel', {
-        title: 'Formulario de Usuario',
-        width: 400,
-        bodyPadding: 10, // Espacio interno
-        renderTo: Ext.getBody(), // Dibuja el formulario en el <body>
+    var modoEdicion = false;
+    var registroEditado = null;
 
-        items: [  // Campos del formulario
+
+    // 1. Definir el modelo de datos "Usuario"
+    Ext.define('Usuario', {
+        extend: 'Ext.data.Model',
+        fields: ['nombre', 'email', 'edad']
+    });
+
+    // 2. Crear el store que guarda la lista de usuarios
+    var storeUsuarios = Ext.create('Ext.data.Store', {
+        model: 'Usuario',
+        data: [
+            { nombre: 'Ana', email: 'ana@example.com', edad: 28 },
+            { nombre: 'Luis', email: 'luis@example.com', edad: 35 }
+        ]
+    });
+
+    // 3. Crear el grid para mostrar los usuarios
+    var grid = Ext.create('Ext.grid.Panel', {
+        title: 'Usuarios registrados',
+        store: storeUsuarios,
+        columns: [
+            { text: 'Nombre', dataIndex: 'nombre', flex: 1 },
+            { text: 'Email', dataIndex: 'email', flex: 1 },
+            { text: 'Edad', dataIndex: 'edad', width: 80 }
+        ],
+        width: 600,
+        height: 300,
+        renderTo: Ext.getBody(),
+        tbar: [  // Top bar: barra de herramientas con botón "Agregar"
+            {
+                text: 'Agregar Usuario',
+                handler: function() {
+                    modoEdicion= false;
+                    registroEditado = null;
+                    formulario.getForm().reset();
+                    ventanaAgregar.setTitle("Agregar Usuario")
+                    ventanaAgregar.show();
+                }
+            },
+
+
+            {
+                text: 'Eliminar Usuario',
+                handler: function() {
+                    var seleccion = grid.getSelectionModel().getSelection();
+
+                    if (seleccion.length === 0) {
+                        Ext.Msg.alert('Atención', 'Selecciona un usuario para eliminar.');
+                        return;
+                    }
+
+                    // Confirmar eliminación
+                    Ext.Msg.confirm('Confirmar', '¿Estás seguro de eliminar al usuario seleccionado?', function(btn) {
+                        if (btn === 'yes') {
+                            storeUsuarios.remove(seleccion[0]); // Elimina del store (y del grid)
+                            Ext.Msg.alert('Eliminado', 'Usuario eliminado correctamente.');
+                        }
+                    });
+                }
+            },
+
+
+            {
+                text: 'Modificar Usuario',
+                handler: function() {
+                    var seleccion = grid.getSelectionModel().getSelection();
+
+                    if (seleccion.length === 0) {
+                        Ext.Msg.alert('Atención', 'Selecciona un usuario para editar.');
+                        return;
+                    }
+
+                    registroEditado=seleccion[0]
+                    formulario.getForm().loadRecord(registroEditado)
+
+                    modoEdicion = true;
+                    ventanaAgregar.setTitle('Editar Usuario')
+                    ventanaAgregar.show();
+                    
+                    
+                }
+            }
+
+        ]
+    });
+
+    // 4. Crear el formulario dentro de una ventana
+    var formulario = Ext.create('Ext.form.Panel', {
+        bodyPadding: 10,
+        defaults: {
+            anchor: '100%',
+            allowBlank: false  // Todos los campos obligatorios
+        },
+        items: [
             {
                 xtype: 'textfield',
-                fieldLabel: 'Nombre',
                 name: 'nombre',
-                allowBlank: false  // No permitir vacío (validación)
+                fieldLabel: 'Nombre'
             },
             {
                 xtype: 'textfield',
-                fieldLabel: 'Email',
                 name: 'email',
-                vtype: 'email',    // Validación automática para formato de email
-                allowBlank: false
+                fieldLabel: 'Email',
+                vtype: 'email'  // Validación de email
             },
             {
                 xtype: 'numberfield',
-                fieldLabel: 'Edad',
                 name: 'edad',
-                minValue: 0,       // Valor mínimo
-                maxValue: 120,     // Valor máximo
-                allowBlank: false
+                fieldLabel: 'Edad',
+                minValue: 0,
+                maxValue: 120
             }
         ],
 
         buttons: [
             {
                 text: 'Guardar',
-                formBind: true,     // Botón solo se activa si el formulario es válido
+                formBind: true, // Habilita el botón solo si es válido
                 handler: function() {
-                    // Obtener los valores ingresados
-                    var valores = formulario.getValues();
+                var valores = formulario.getValues();
 
-                    // Mostrar en consola (simulando guardado o envío)
-                    console.log('Datos guardados:', valores);
-
-                    // Mostrar mensaje al usuario
-                    Ext.Msg.alert('Éxito', 'Datos guardados correctamente');
+                if (modoEdicion && registroEditado) {
+                    // Editar el usuario existente
+                    registroEditado.set(valores);
+                    Ext.Msg.alert('Actualizado', 'Usuario modificado correctamente.');
+                } else {
+                    // Agregar nuevo usuario
+                    storeUsuarios.add(valores);
+                    Ext.Msg.alert('Éxito', 'Usuario agregado correctamente.');
                 }
+
+                // Resetear todo
+                formulario.getForm().reset();
+                ventanaAgregar.hide();
+                modoEdicion = false;
+                registroEditado = null;
+            }
+
             },
             {
-                text: 'Limpiar',
+                text: 'Cancelar',
                 handler: function() {
-                    formulario.getForm().reset();  // Limpiar campos
+                    ventanaAgregar.hide();
+                    formulario.getForm().reset();
                 }
             }
         ]
     });
+
+    // 5. Crear la ventana que contiene el formulario
+    var ventanaAgregar = Ext.create('Ext.window.Window', {
+        title: 'Agregar nuevo usuario',
+        modal: true,
+        closeAction: 'hide',
+        width: 400,
+        layout: 'fit',
+        items: [formulario]
+    });
+
+
+
 });
 </script>
 </body>
