@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,15 +18,15 @@ Ext.onReady(function() {
     // 1. Definir el modelo de datos "Usuario"
     Ext.define('Usuario', {
         extend: 'Ext.data.Model',
-        fields: ['nombre', 'email', 'edad']
+        fields: ['nombre', 'email', 'edad', 'telefono']
     });
 
     // 2. Crear el store que guarda la lista de usuarios
     var storeUsuarios = Ext.create('Ext.data.Store', {
         model: 'Usuario',
         data: [
-            { nombre: 'Ana', email: 'ana@example.com', edad: 28 },
-            { nombre: 'Luis', email: 'luis@example.com', edad: 35 }
+            { nombre: 'Ana', email: 'ana@example.com', edad: 28, telefono:123 },
+            { nombre: 'Luis', email: 'luis@example.com', edad: 35, telefono:456 }
         ]
     });
 
@@ -36,7 +37,8 @@ Ext.onReady(function() {
         columns: [
             { text: 'Nombre', dataIndex: 'nombre', flex: 1 },
             { text: 'Email', dataIndex: 'email', flex: 1 },
-            { text: 'Edad', dataIndex: 'edad', width: 80 }
+            { text: 'Edad', dataIndex: 'edad', width: 80 },
+            { text: 'Telefono', dataIndex: 'telefono', flex: 1}
         ],
         width: 600,
         height: 300,
@@ -124,7 +126,14 @@ Ext.onReady(function() {
                 fieldLabel: 'Edad',
                 minValue: 0,
                 maxValue: 120
+            },
+            {
+                xtype: 'numberfield',
+                name: 'telefono',
+                fieldLabel: 'Telefono',
             }
+
+           
         ],
 
         buttons: [
@@ -171,8 +180,6 @@ Ext.onReady(function() {
         layout: 'fit',
         items: [formulario]
     });
-
-
 
 });
 </script>
