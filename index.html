@@ -1,0 +1,50 @@
+<!-- EJEMPLO BASICO GRID PANEL  -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ejemplo Grid Panel Ext JS</title>
+    <link rel="stylesheet" href="ext-4/resources/css/ext-all.css">
+    <script src="ext-4/ext-all.js"></script>
+</head>
+<body>
+<script>
+Ext.onReady(function() {
+
+    // Definir un modelo para los datos (estructura de cada registro)
+    Ext.define('Usuario', {
+        extend: 'Ext.data.Model',
+        fields: [
+            {name: 'nombre', type: 'string'},
+            {name: 'email', type: 'string'},
+            {name: 'edad', type: 'int'}
+        ]
+    });
+
+    // Crear un Store con datos estáticos
+    var storeUsuarios = Ext.create('Ext.data.Store', {
+        model: 'Usuario',
+        data: [
+            {nombre: 'Ana', email: 'ana@example.com', edad: 28},
+            {nombre: 'Luis', email: 'luis@example.com', edad: 35},
+            {nombre: 'María', email: 'maria@example.com', edad: 22}
+        ]
+    });
+
+    // Crear el Grid Panel y renderizarlo en el body
+    Ext.create('Ext.grid.Panel', {
+        title: 'Lista de Usuarios',
+        store: storeUsuarios,
+        columns: [
+            {text: 'Nombre', dataIndex: 'nombre', flex: 1},
+            {text: 'Email', dataIndex: 'email', flex: 1},
+            {text: 'Edad', dataIndex: 'edad', width: 70}
+        ],
+        height: 600,
+        width: 800,
+        renderTo: Ext.getBody()
+    });
+});
+</script>
+</body>
+</html>
