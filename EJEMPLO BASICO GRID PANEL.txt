@@ -1,0 +1,71 @@
+<!-- EJEMPLO BASICO GRID PANEL  -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ejemplo Grid Panel Ext JS</title>
+
+    <!-- Estilos de Ext JS: necesarios para que los componentes se vean correctamente -->
+    <link rel="stylesheet" href="ext-4/resources/css/ext-all.css">
+
+    <!-- Biblioteca principal de Ext JS -->
+    <script src="ext-4/ext-all.js"></script>
+</head>
+<body>
+<script>
+// Esperar a que la página y Ext JS estén completamente cargados
+Ext.onReady(function() {
+
+    // Definir un modelo (estructura de los datos) llamado 'Usuario'
+    Ext.define('Usuario', {
+        extend: 'Ext.data.Model',  // Hereda de la clase base de modelos de datos
+        fields: [                  // Campos que tendrá cada objeto 'Usuario'
+            {name: 'nombre', type: 'string'},
+            {name: 'email', type: 'string'},
+            {name: 'edad', type: 'int'}
+        ]
+    });
+
+    // Crear un Store (una lista de datos) con información estática
+    var storeUsuarios = Ext.create('Ext.data.Store', {
+        model: 'Usuario',  // Modelo que define la estructura de los datos
+        data: [            // Datos reales que se mostrarán en el grid
+            {nombre: 'Ana', email: 'ana@example.com', edad: 28},
+            {nombre: 'Luis', email: 'luis@example.com', edad: 35},
+            {nombre: 'María', email: 'maria@example.com', edad: 22}
+        ]
+    });
+
+    // Crear un Grid Panel (una tabla visual) para mostrar los datos
+    Ext.create('Ext.grid.Panel', {
+        title: 'Lista de Usuarios',   // Título que aparece en la parte superior del grid
+
+        store: storeUsuarios,        // Fuente de datos que alimenta la tabla
+
+        columns: [                    // Definición de las columnas visibles del grid
+            {
+                text: 'Nombre',       // Título de la columna
+                dataIndex: 'nombre',  // Campo del modelo que se mostrará en esta columna
+                flex: 1               // Usa flex para que esta columna se expanda proporcionalmente
+            },
+            {
+                text: 'Email',
+                dataIndex: 'email',
+                flex: 1               // También se expande proporcionalmente
+            },
+            {
+                text: 'Edad',
+                dataIndex: 'edad',
+                width: 70            // Ancho fijo (útil para campos cortos como edad)
+            }
+        ],
+
+        height: 600,  // Altura del grid completo (en píxeles)
+        width: 800,   // Ancho del grid completo (en píxeles)
+
+        renderTo: Ext.getBody()  // Dibuja el grid dentro del <body> del HTML
+    });
+});
+</script>
+</body>
+</html>
