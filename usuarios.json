@@ -1,7 +1,0 @@
-{
-  "success": true,
-  "users": [
-    { "id": 1, "nombre": "Ana", "email": "ana@example.com", "edad": 28 },
-    { "id": 2, "nombre": "Luis", "email": "luis@example.com", "edad": 35 }
-  ]
-}
